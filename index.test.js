@@ -45,6 +45,12 @@ describe("Test POST route", () => {
         expect(response.body.name).toBe(newUser.name);
         expect(response.body.age).toBe(newUser.age);
     })
+    it("POST /users returns error key with array if name field is empty", async () => {
+        const response = await request(app).post("/users").send({ name: "", age: 25 });
+        expect(response.statusCode).toBe(200);
+        const responseData = JSON.parse(response.text);
+        expect(responseData).toEqual({ errors: [{ location: 'body', msg: 'Invalid value', param: "name", value: '' }] });
+    })
 })
 
 describe("Test PUT route", () => {

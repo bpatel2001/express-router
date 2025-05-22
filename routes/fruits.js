@@ -1,6 +1,7 @@
 const express = require('express');
 const fruitRouter = express.Router();
 const { Fruit } = require('../models/index');
+const { check, validationResult } = require('express-validator');
 
 fruitRouter.use(express.json());
 fruitRouter.use(express.urlencoded());
@@ -18,7 +19,11 @@ fruitRouter.get('/:id', async (request, response) => {
     response.json(fruit);
 });
 
-fruitRouter.post('/', async (request, response) => {
+fruitRouter.post('/', [check("color").not().isEmpty().trim()], async (request, response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.json({ errors: errors.array() });
+    }
     const fruit = await Fruit.create(request.body);
 
     response.json(fruit);
