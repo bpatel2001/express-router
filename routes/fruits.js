@@ -19,7 +19,10 @@ fruitRouter.get('/:id', async (request, response) => {
     response.json(fruit);
 });
 
-fruitRouter.post('/', [check("color").not().isEmpty().trim()], async (request, response) => {
+fruitRouter.post('/', [check("color").not().isEmpty().trim(),
+                       check("name").not().isEmpty().trim(),
+                       check("name").isLength({ min: 5, max: 20 }),
+], async (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
         return response.json({ errors: errors.array() });
@@ -29,7 +32,14 @@ fruitRouter.post('/', [check("color").not().isEmpty().trim()], async (request, r
     response.json(fruit);
 });
 
-fruitRouter.put('/:id', async (request, response) => {
+fruitRouter.put('/:id', [check("name").not().isEmpty().trim(),
+                         check("age").not().isEmpty().trim(),
+
+],  async (request, response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.json({ errors: errors.array() });
+    }
     const fruitId = request.params.id;
 
     const fruit = await Fruit.update(request.body, {

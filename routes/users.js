@@ -19,7 +19,10 @@ userRouter.get('/:id', async (request, response) => {
     response.json(user);
 });
 
-userRouter.post('/', [check("name").not().isEmpty().trim()], async (request, response) => {
+userRouter.post('/', [check("name").not().isEmpty().trim(),
+                      check("age").not().isEmpty().trim(),
+                      check("name").isLength({ min: 5, max: 15 }),
+], async (request, response) => {
     const errors = validationResult(request);
     if (!errors.isEmpty()) {
         return response.json({ errors: errors.array() });
@@ -29,7 +32,14 @@ userRouter.post('/', [check("name").not().isEmpty().trim()], async (request, res
     response.json(user);
 });
 
-userRouter.put('/:id', async (request, response) => {
+userRouter.put('/:id', [check("name").not().isEmpty().trim(),
+                        check("age").not().isEmpty().trim(),
+
+], async (request, response) => {
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+        return response.json({ errors: errors.array() });
+    }
     const userId = request.params.id;
 
     const user = await User.update(request.body, {
